@@ -10,15 +10,22 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @Binding var username : String
+    @Binding var userId : String
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+     
+        VStack{
+            Spacer()
+            SlideMenuView()
+            Spacer()
+        }
+        .navigationBarBackButtonHidden(true)
+        
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(username: Binding.constant("Hello"))
+        HomeView(userId: Binding.constant("Hello"))
     }
 }

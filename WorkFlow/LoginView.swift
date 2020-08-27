@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import Firebase
+import FirebaseAuth
 import FirebaseFirestore
 
 let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255.0, opacity: 1.0)
@@ -62,14 +62,16 @@ struct LoginView: View {
                 
                 PasswordSecureField(password: $password)
                 
-                NavigationLink(destination: HomeView(username: self.$username), isActive: $loginSuccsess ) { EmptyView() }
+                NavigationLink(destination: HomeView(userId: self.$username), isActive: $loginSuccsess ) { EmptyView() }
                 
                 Button(action: {
+                    
                     self.animate = true
                     Auth.auth().signIn(withEmail: self.username, password: self.password) { authResult, error in
                         if (error == nil && authResult != nil) {
                             self.animate = false
                             self.loginSuccsess = true
+                            self.getSingleproperty()
                             print("Erfolg")
                         } else if (error != nil && authResult == nil) {
                             self.animate = false
@@ -77,6 +79,7 @@ struct LoginView: View {
                             print("Fehler")
                         }
                     }
+                    
                 }){
                     LoginButtonContext()
                 }
@@ -121,7 +124,42 @@ struct LoginView: View {
                     
             }
         }
-    }    
+    }
+    
+    func getSingleproperty() {
+        
+      var desiredProperty: String!
+        let docRef = db.collection("UnKnownErrorMessages").document("Error1234")
+            
+            //.whereField("occureTime", isLessThan: Timestamp.init() )
+        
+
+        docRef.getDocument { (document, error) in
+          if let document = document, document.exists {
+            let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+            //Print all data in the document
+            //print("Document data: \(dataDescription)")
+            
+            if let allPropertiesInDocument = document.data() {
+              
+              let nameOfPropertyIwantToRetrieve = "errorMessage"
+              
+              if let selectedProperty = allPropertiesInDocument[nameOfPropertyIwantToRetrieve] {
+                desiredProperty = selectedProperty as? String
+              }
+            }
+            //Print exact the data that is in 'nameOfPropertyIwantToRetrieve' specified
+            //print("Value of desiredProperty is \(desiredProperty.description)")
+            
+            
+            
+          } else {
+              print("Document does not exist")
+          }
+      }
+    }
+    
+    
 }
 
 struct LoginView_Previews: PreviewProvider {
@@ -296,17 +334,7 @@ struct SignUpView: View {
             } else {}
         }))
     }
-    
-    func getLastErrorID() -> String {
-        
-        
-        
-        //read from Database
-        
-        
-        
-        return "Hello"
-    }
+
 }
 
 struct ProovingData: View{
