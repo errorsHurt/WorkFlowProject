@@ -25,8 +25,8 @@ struct SlideMenuView: View {
                     Image(systemName: "person")
                 }
             }
-            .frame(width: 260, height : 800)
-            .background(RoundedCorners(color: Color.init(.lightGray).opacity(1/2), tl: 0, tr: 32, bl: 0, br: 32))
+            .frame(width: 300, height : 800)
+            .background(RoundedCorners(color: Color.init(.white).opacity(1/2), tl: 0, tr: 32, bl: 0, br: 32))
 
             Spacer()//Kommt am Schluss wegwenn das Menü fertig design ist
             

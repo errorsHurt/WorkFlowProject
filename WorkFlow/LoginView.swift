@@ -12,11 +12,13 @@ import FirebaseFirestore
 
 let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255.0, opacity: 1.0)
 
+let db = Firestore.firestore()
+
+let dbQuerys = DataBaseQuerys()
+
 struct LoginView: View {
     
-    let db = Firestore.firestore()
-    
-    
+    @State var userExists : Bool = true
     
     @State var username : String = ""
     @State var password : String = ""
@@ -32,12 +34,17 @@ struct LoginView: View {
     
     @State var animate : Bool = false
     
-    
-    
-    
     var body: some View {
         
         NavigationView{
+            
+            Image("SignInUp Image")
+            
+                
+            Text("Hello \nSwiftUI Blur Effect")
+                .font(.largeTitle)
+                .fontWeight(.black)
+                .foregroundColor(.white)
             
             VStack{
                 
@@ -53,33 +60,38 @@ struct LoginView: View {
                 Spacer()
                 
                 if(self.animate){
-                    ProovingData(animate: self.$animate)
+                    LoadingOverlay(animate: self.$animate)
                 }
                 
                 Spacer()
                 
-                UsernameTextField(username : $username)
+                VStack{
+                    UsernameTextField(username : $username)
+                    
+                    PasswordSecureField(password: $password)
+                }
                 
-                PasswordSecureField(password: $password)
+                Result(resultText: self.$resultText)
                 
                 NavigationLink(destination: HomeView(userId: self.$username), isActive: $loginSuccsess ) { EmptyView() }
                 
                 Button(action: {
-                    
                     self.animate = true
                     Auth.auth().signIn(withEmail: self.username, password: self.password) { authResult, error in
                         if (error == nil && authResult != nil) {
+                            if(!self.userExists){
+                                dbQuerys.createUserInformationDoc(usermail: self.username)
+                            }
+                            print("Login Succsess")
                             self.animate = false
                             self.loginSuccsess = true
-                            self.getSingleproperty()
-                            print("Erfolg")
                         } else if (error != nil && authResult == nil) {
+                            self.resultText = errorDebugFunction(errDesc: error.debugDescription)
+                            print("Login failed")
                             self.animate = false
                             self.loginSuccsess = false
-                            print("Fehler")
                         }
                     }
-                    
                 }){
                     LoginButtonContext()
                 }
@@ -103,7 +115,7 @@ struct LoginView: View {
                                 .onEnded({ value in
                                     if value.translation.height < 0 {
                                         self.showPopover.toggle()
-                                    } else {}
+                                    }
                                 }))
                         
                     }
@@ -120,47 +132,98 @@ struct LoginView: View {
                 .popover(
                     isPresented: self.$showPopover
                 ){
-                    SignUpView(username: self.$username, password: self.$password, confirmPass: self.$confirmPass, showPopover: self.$showPopover, passwordEqual: self.$passwordEqual, resText: self.$resultText)
+                    SignUpView(username: self.$username, password: self.$password, confirmPass: self.$confirmPass, showPopover: self.$showPopover, passwordEqual: self.$passwordEqual, userExists: self.$userExists, resultText: self.$resultText)
                     
             }
         }
     }
-    
-    func getSingleproperty() {
-        
-      var desiredProperty: String!
-        let docRef = db.collection("UnKnownErrorMessages").document("Error1234")
-            
-            //.whereField("occureTime", isLessThan: Timestamp.init() )
-        
+}
 
-        docRef.getDocument { (document, error) in
-          if let document = document, document.exists {
-            let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
-            //Print all data in the document
-            //print("Document data: \(dataDescription)")
+class DataBaseQuerys {
+    
+    func getErrorMessage(sortedBy: String) {
+        
+        var desiredProperty: String!
+        
+        db.collection("UnknownErrorMessages").order(by: sortedBy, descending: true).limit(to: 1).getDocuments() { (querySnapshot, err) in
             
-            if let allPropertiesInDocument = document.data() {
-              
-              let nameOfPropertyIwantToRetrieve = "errorMessage"
-              
-              if let selectedProperty = allPropertiesInDocument[nameOfPropertyIwantToRetrieve] {
-                desiredProperty = selectedProperty as? String
-              }
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    
+                    let nameOfPropertyIwantToRetrieve = "errorMessage"
+                    
+                    if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
+                        desiredProperty = selectedProperty as? String
+                    }
+                    
+                    //The result from 'nameOfPropertyIwantToRetrieve'
+                    print(desiredProperty.description)
+                    
+                    
+                }
             }
-            //Print exact the data that is in 'nameOfPropertyIwantToRetrieve' specified
-            //print("Value of desiredProperty is \(desiredProperty.description)")
             
-            
-            
-          } else {
-              print("Document does not exist")
-          }
-      }
+        }
+        
     }
     
+    func createNewErrorDoc(errMessage : String) {
+        
+        db.collection("UnknownErrorMessages").document().setData([
+            "errorMessage": errMessage,
+            "occureTime": Timestamp.init(),
+            "read": false
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+        
+    }
+    
+    func createUserInformationDoc(usermail: String) {
+        
+        db.collection("User").document().setData([
+            "lastLogIn": Timestamp.init(),
+            "signedUp": Timestamp.init(),
+            "usermail": usermail.lowercased()
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+    }
     
 }
+
+func errorDebugFunction(errDesc : String) -> String {
+    
+    print("Error ",errDesc)
+    
+    if (errDesc.contains("Code=17020")) {
+        return  "Network error has occured. Check your internet connection."
+    } else if(errDesc.contains("Code=17007")){
+        return  "The email address is already in use by another account."
+    } else if (errDesc.contains("Code=17008")) {
+        return  "The email adress is baly formatted."
+    } else if (errDesc.contains("Code=17026")) {
+        return  "The password must be 6 characters long or more."
+    } else if (errDesc.contains("Code=17009") || errDesc.contains("Code=17011")) {
+        return  "The password or email is invalide."
+    }  else if(errDesc.contains("Code=17020")) {
+        return  "Network error has occured. Check your internet connection."
+    } else {
+        dbQuerys.createNewErrorDoc(errMessage: errDesc.debugDescription)
+        return "An unknown error occured. Please restart the app!"
+    }
+}
+
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
@@ -261,7 +324,7 @@ struct LoginButtonContext : View {
     }
 }
 
-struct SignUpButton : View {
+struct SignUpButtonText : View {
     var body: some View {
         return Text("Sign Up")
             .font(.headline)
@@ -274,13 +337,15 @@ struct SignUpButton : View {
 }
 
 struct SignUpView: View {
+    
     @Binding var username : String
     @Binding var password : String
     @Binding var confirmPass : String
     @Binding var showPopover: Bool
     @Binding var passwordEqual: Bool
+    @Binding var userExists : Bool
     
-    @Binding var resText : String
+    @Binding var resultText : String
     
     
     var body: some View {
@@ -298,30 +363,23 @@ struct SignUpView: View {
             PasswordSecureField(password: self.$password)
             ConfirmPassField(confirmPass: self.$confirmPass)
             
-            Result(resText: self.$resText)
+            Result(resultText: self.$resultText)
             
-            SignUpButton()
+            SignUpButtonText()
                 .onTapGesture {
                     if(self.confirmPass.elementsEqual(self.password)){
+                        self.showPopover = true
                         Auth.auth().createUser(withEmail: self.username, password: self.password) { authResult, error in
-                            self.showPopover = true
                             if (error != nil && authResult == nil) {
-                                if(error.debugDescription.contains("Code=17007")){
-                                    self.resText = "The email address is already in use by another account."
-                                } else if (error.debugDescription.contains("Code=17026")) {
-                                    self.resText = "The password must be 6 characters long or more."
-                                } else {
-                                    self.resText = "Bitte meld sie diesen Feler dem Admin"
-                                    // create a new error statement for firestore and put the informatino in it "self.getLastErrorID()"
-                                }
+                                self.resultText = errorDebugFunction(errDesc: error.debugDescription)
                             } else if (error == nil && authResult != nil) {
+                                self.userExists = false
                                 self.showPopover = false
-                                
                             }
                         }
                     } else {
                         print("Password does not match")
-                        self.resText = "Password doesn't match"
+                        self.resultText = "Password doesn't match"
                     }
             }
             
@@ -334,10 +392,10 @@ struct SignUpView: View {
             } else {}
         }))
     }
-
+    
 }
 
-struct ProovingData: View{
+struct LoadingOverlay: View{
     
     @Binding var animate : Bool
     
@@ -372,13 +430,18 @@ struct ProovingData: View{
 
 struct Result : View{
     
-    @Binding var resText : String
+    @Binding var resultText : String
     
     var body: some View {
         
-        return Text(resText)
+        return Text(resultText)
+            .bold()
+            .background(Color.white.opacity(1/2))
             .foregroundColor(.red)
-            .padding(.bottom, 10)
+            .cornerRadius(3)
+            .padding(.bottom, 2)
+            .padding(.bottom, 6)
+            
         
     }
 }
