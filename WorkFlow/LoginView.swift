@@ -7,8 +7,8 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 import FirebaseFirestore
+import FirebaseAuth
 
 let lightGreyColor = Color(red: 239.0/255.0, green: 243.0/255.0, blue: 244.0/255.0, opacity: 1.0)
 
@@ -17,6 +17,9 @@ let db = Firestore.firestore()
 let dbQuerys = DataBaseQuerys()
 
 struct LoginView: View {
+    
+    var screenWidth : CGFloat = UIScreen.main.bounds.width
+    var screenHeight : CGFloat = UIScreen.main.bounds.height
     
     @State var userExists : Bool = true
     
@@ -37,14 +40,6 @@ struct LoginView: View {
     var body: some View {
         
         NavigationView{
-            
-            Image("SignInUp Image")
-            
-                
-            Text("Hello \nSwiftUI Blur Effect")
-                .font(.largeTitle)
-                .fontWeight(.black)
-                .foregroundColor(.white)
             
             VStack{
                 
@@ -373,6 +368,9 @@ struct SignUpView: View {
                             if (error != nil && authResult == nil) {
                                 self.resultText = errorDebugFunction(errDesc: error.debugDescription)
                             } else if (error == nil && authResult != nil) {
+                                Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
+                                    
+                                })
                                 self.userExists = false
                                 self.showPopover = false
                             }

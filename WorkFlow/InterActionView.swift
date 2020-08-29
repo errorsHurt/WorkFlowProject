@@ -7,33 +7,22 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseFirestore
+
+
 
 struct InterActionView: View {
+    
     var body: some View {
         
         VStack{
             
-            HStack{
-                
-                Button(action: {}){
-                    Text("Start")
-                }
-                
-                
-                Button(action: {}){
-                    Text("Pause")
-                }
-                
-                Button(action: {}){
-                    Text("Stop")
-                }
-            }
-            
+            Text("Hello")
+           
             
         }
-        .frame(width : 350, height : 800)
-        .background(Color.white.opacity(1/2))
-    .cornerRadius(32)
+        
     }
 }
 
