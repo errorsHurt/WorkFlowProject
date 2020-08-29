@@ -10,7 +10,6 @@
 		9F9032A87EFCA012DEAA4760 /* Pods_WorkFlow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB8F17E473E1F7E5EC6B0E3 /* Pods_WorkFlow.framework */; };
 		E7487EDB24F67B230031911E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7487EDA24F67B230031911E /* GoogleService-Info.plist */; };
 		E77E86BD24F7F07B0055E30E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77E86BC24F7F07B0055E30E /* HomeView.swift */; };
-		E77E86C424F8107C0055E30E /* SlideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77E86C324F8107C0055E30E /* SlideMenuView.swift */; };
 		E7857AA324F98ED800F70F91 /* InterActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7857AA224F98ED800F70F91 /* InterActionView.swift */; };
 		E7934AEE24F66FCA004DC745 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7934AED24F66FCA004DC745 /* AppDelegate.swift */; };
 		E7934AF024F66FCA004DC745 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7934AEF24F66FCA004DC745 /* SceneDelegate.swift */; };
@@ -26,7 +25,6 @@
 		C1DBD050CC3E536A0A712FAE /* Pods-WorkFlow.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkFlow.release.xcconfig"; path = "Target Support Files/Pods-WorkFlow/Pods-WorkFlow.release.xcconfig"; sourceTree = "<group>"; };
 		E7487EDA24F67B230031911E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		E77E86BC24F7F07B0055E30E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		E77E86C324F8107C0055E30E /* SlideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuView.swift; sourceTree = "<group>"; };
 		E7857AA224F98ED800F70F91 /* InterActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterActionView.swift; sourceTree = "<group>"; };
 		E7934AEA24F66FCA004DC745 /* WorkFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7934AED24F66FCA004DC745 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -93,7 +91,6 @@
 				E7934AF124F66FCA004DC745 /* LoginView.swift */,
 				E77E86BC24F7F07B0055E30E /* HomeView.swift */,
 				E7857AA224F98ED800F70F91 /* InterActionView.swift */,
-				E77E86C324F8107C0055E30E /* SlideMenuView.swift */,
 				E7934AF324F66FCC004DC745 /* Assets.xcassets */,
 				E7934AF824F66FCC004DC745 /* LaunchScreen.storyboard */,
 				E7934AFB24F66FCD004DC745 /* Info.plist */,
@@ -229,7 +226,6 @@
 			files = (
 				E7934AEE24F66FCA004DC745 /* AppDelegate.swift in Sources */,
 				E77E86BD24F7F07B0055E30E /* HomeView.swift in Sources */,
-				E77E86C424F8107C0055E30E /* SlideMenuView.swift in Sources */,
 				E7857AA324F98ED800F70F91 /* InterActionView.swift in Sources */,
 				E7934AF024F66FCA004DC745 /* SceneDelegate.swift in Sources */,
 				E7934AF224F66FCA004DC745 /* LoginView.swift in Sources */,

@@ -18,13 +18,15 @@ let dbQuerys = DataBaseQuerys()
 
 struct LoginView: View {
     
+    
+    
     var screenWidth : CGFloat = UIScreen.main.bounds.width
     var screenHeight : CGFloat = UIScreen.main.bounds.height
     
     @State var userExists : Bool = true
     
-    @State var username : String = ""
-    @State var password : String = ""
+    @State var username : String = "maximilianelias.meier@web.de"
+    @State var password : String = "ma060901"
     @State var confirmPass : String = ""
     
     @State var resultText : String = " "
@@ -68,7 +70,7 @@ struct LoginView: View {
                 
                 Result(resultText: self.$resultText)
                 
-                NavigationLink(destination: HomeView(), isActive: $loginSuccsess ) { EmptyView() }
+                NavigationLink(destination: HomeView(username: self.username), isActive: $loginSuccsess ) { EmptyView() }
                 
                 Button(action: {
                     self.animate = true
@@ -77,6 +79,7 @@ struct LoginView: View {
                             if(!self.userExists){
                                 dbQuerys.createUserInformationDoc(usermail: self.username)
                             }
+                            dbQuerys.updateLastLogInTime(un: self.username)
                             print("Login Succsess")
                             self.animate = false
                             self.loginSuccsess = true
@@ -134,7 +137,23 @@ struct LoginView: View {
     }
 }
 
+
 class DataBaseQuerys {
+    
+    func updateLastLogInTime(un : String) {
+        
+        db.collection("User").document(un).updateData([
+            "lastLogIn": Timestamp.init()
+        ]) { err in
+            if let err = err {
+                print("Error updating document: \(err)")
+
+            } else {
+                print("Document successfully updated")
+            }
+        }
+        
+    }
     
     func getErrorMessage(sortedBy: String) {
         
@@ -182,11 +201,14 @@ class DataBaseQuerys {
     
     func createUserInformationDoc(usermail: String) {
         
-        db.collection("User").document().setData([
+        let docData: [String: Any] =
+        [
             "lastLogIn": Timestamp.init(),
             "signedUp": Timestamp.init(),
-            "usermail": usermail.lowercased()
-        ]) { err in
+            "usermail": usermail
+        ]
+        
+        db.collection("User").document(usermail).setData(docData) { err in
             if let err = err {
                 print("Error writing document: \(err)")
             } else {
