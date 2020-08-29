@@ -15,10 +15,18 @@ let dbQuery = ReadWriteData()
 
 struct HomeView: View {
     
+    @State var pauseBegin : Date = Date()
+    @State var pauseEnd : Date = Date()
+    @State var pauseDur : Int = 0
+    
     @State var sWidth = LoginView().screenWidth
     let sHeight = LoginView().screenHeight
     
     @State var username : String
+    
+    @State var text : Int = 0
+    
+    
     
     
     var body: some View {
@@ -29,7 +37,7 @@ struct HomeView: View {
                 
                 HStack{
                     
-                    Text("start")
+                    Text("\(self.text)")
                     
                     
                 }
@@ -41,36 +49,38 @@ struct HomeView: View {
                     
                     Button(action: {
                         
-                        
-                        
                     }) {
-                        Text("Start")
+                        Text("start")
                     }
                     .modifier(ButtonMod(w : self.$sWidth))
                     
-                    Button(action: {
-                        
-                        
-                        
-                    }) {
-                        Text("Pause")
-                    }
-                    .modifier(ButtonMod(w : self.$sWidth))
+                    
+                    Text("Pause")
+                        .modifier(ButtonMod(w : self.$sWidth))
+                        .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
+                            .onEnded({ value in
+                                if value.translation.width < 0 {
+                                    //self.text = "Pausenbeginn"
+                                    print("links")
+                                    self.pauseBegin = Date()
+                                } else if value.translation.width > 0 {
+                                    //self.text = "Pausenende"
+                                    print("rechts")
+                                    self.pauseEnd = Date()
+                                    self.text =  calcPauseDur(from: self.pauseBegin, to: self.pauseEnd)
+                                    
+                                    
+                                    
+                                }
+                            }))
+                    
                     
                     Button(action: {
-                        
-                        
                         
                     }) {
                         Text("Ende")
                     }
                     .modifier(ButtonMod(w : self.$sWidth))
-                    
-                    
-                    
-                    
-                    
-                    
                     
                 }
                 .frame(width: (5/6 * self.sWidth), height: (1/3 * self.sWidth), alignment: .center)
@@ -84,6 +94,7 @@ struct HomeView: View {
     }
 }
 
+
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView(username: "maximilianelias.meier@web.de")
@@ -92,9 +103,11 @@ struct HomeView_Previews: PreviewProvider {
 
 class ReadWriteData {
     
-    
-    func getData() {
+    func saveDate(){
         
+    }
+    
+    func getPauseBeginDate() {
         
         var desiredProperty: String!
         
@@ -116,10 +129,9 @@ class ReadWriteData {
                     if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
                         desiredProperty = selectedProperty as? String
                     }
-                    
                     //The result from 'nameOfPropertyIwantToRetrieve'
-                    //print("print -> ",desiredProperty.description)
-                    print(document.data())
+                    print("print -> ",desiredProperty.description)
+                    //print(document.data())
                     
                     
                 }
@@ -155,7 +167,6 @@ class ReadWriteData {
         
     }
     
-    
 }
 
 struct ButtonMod: ViewModifier {
@@ -170,3 +181,8 @@ struct ButtonMod: ViewModifier {
         
     }
 }
+
+func calcPauseDur(from firstDate: Date, to secondDate: Date) -> Int{
+    return (NSCalendar.current.dateComponents([.hour,.minute], from: firstDate, to: secondDate).hour ?? 0) as Int + (NSCalendar.current.dateComponents([.hour,.minute], from: firstDate, to: secondDate).minute ?? 0) as Int
+}
+
