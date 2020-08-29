@@ -7,61 +7,54 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
 
-//screenWidth : CGFloat = UIScreen.main.bounds.width
-//screenHeight : CGFloat = UIScreen.main.bounds.height
 
 struct HomeView: View {
     
     let sWidth = LoginView().screenWidth
     let sHeight = LoginView().screenHeight
     
-    @Binding var userId : String
-    
-    @State var showMenu: CGFloat = -215
-    
-    @State var blurBackground : CGFloat = 0
+    @State var clickCounter : Int = 0
     
     var body: some View {
         
-        ZStack{
+        Group{
             
-            VStack{
+            VStack(alignment: .center, spacing: 10){
                 
-                Text("Moin")
+                HStack{
+                    
+                    Text("start")
+                    .frame(width: (1/3 * self.sWidth), height: (1/3 * self.sWidth), alignment: .center)
+                    .background(Color.white)
+                    .cornerRadius(32)
+                    
+                }
+                
+                HStack{
+                    
+                    Button(action: {
+                        
+                    }) {
+                        Text("Start")
+                    }
+                    .frame(width: (1/3 * self.sWidth), height: (1/5 * self.sWidth), alignment: .center)
+                    .background(Color.white)
+                    .cornerRadius(32)
+                }
+                
             }
-            
-            
-            
-            
-            
-            
             
         }
-        .frame(width: self.sWidth, height: self.sHeight)
-        .background(Image("SignInUp Image"))
-        .navigationBarBackButtonHidden(true)
-        .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
-        .onEnded(){ value in
-            if value.translation.width > 0 {
-                withAnimation{
-                    self.blurBackground = 30
-                    self.showMenu = 184
-                }
-            } else {
-                withAnimation{
-                    self.blurBackground = 0
-                    self.showMenu = -215
-                }
-            }
-            
-        })
+        .background(Image("SignInUp Image").scaleEffect(0.5), alignment: .center)
         
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(userId: Binding.constant("Hello"))
+        HomeView()
     }
 }

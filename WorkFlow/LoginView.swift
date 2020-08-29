@@ -68,7 +68,7 @@ struct LoginView: View {
                 
                 Result(resultText: self.$resultText)
                 
-                NavigationLink(destination: HomeView(userId: self.$username), isActive: $loginSuccsess ) { EmptyView() }
+                NavigationLink(destination: HomeView(), isActive: $loginSuccsess ) { EmptyView() }
                 
                 Button(action: {
                     self.animate = true

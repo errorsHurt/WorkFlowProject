@@ -18,8 +18,11 @@ struct InterActionView: View {
         
         VStack{
             
-            Text("Hello")
-           
+            HStack{
+                
+                Text("Hello")
+                
+            }
             
         }
         
