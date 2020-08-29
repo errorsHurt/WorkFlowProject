@@ -19,7 +19,7 @@ struct InterActionView: View {
         VStack{
             
             Text("Hello")
-           
+           Text("Hello")
             
         }
         
