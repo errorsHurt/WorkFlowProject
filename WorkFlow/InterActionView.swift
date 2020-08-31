@@ -20,7 +20,14 @@ struct InterActionView: View {
             
             HStack{
                 
+                Button(action: {}){
+                    Text("Hello")
+                        .disabled(true)
+                }
+                .disabled(true)
+                
                 Text("Hello")
+                
                 
             }
             

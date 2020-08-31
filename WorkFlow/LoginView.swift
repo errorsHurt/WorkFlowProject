@@ -16,21 +16,41 @@ let db = Firestore.firestore()
 
 let dbQuerys = DataBaseQuerys()
 
+struct dataKeys {
+    static let keyUsername = "keyUsername"
+    static let keyPassword = "keyPassword"
+    static let keySingedUp = "keySingedUp"
+    
+    static let keyWorkBegin = "workBegin"
+    static let keyPauseStart = "pauseBegin"
+    static let keyPauseEnd = "pauseEnd"
+    static let keyPauseDur = "pauseDuration"
+    static let keyWorkEnd = "workEnd"
+    static let keyWorkDur = "workDuration"
+    
+    static let keySActionV0 = "keySActionV0"
+    static let keySActionV1 = "keySActionV1"
+    static let keySActionV2 = "keySActionV2"
+    
+    static let keySPauseE = "keySPauseE"
+    
+    static let keyPauseSwpieB = "keyPauseSwpieB"
+    static let keyPauseSwpieE = "keyPauseSwpieE"
+}
+
+
 struct LoginView: View {
-    
-    
     
     var screenWidth : CGFloat = UIScreen.main.bounds.width
     var screenHeight : CGFloat = UIScreen.main.bounds.height
     
     @State var userExists : Bool = true
     
-    @State var username : String = "maximilianelias.meier@web.de"
-    @State var password : String = "ma060901"
+    @State var username : String = offlineData.string(forKey: dataKeys.keyUsername) ?? ""
+    @State var password : String = offlineData.string(forKey: dataKeys.keyPassword) ?? ""
     @State var confirmPass : String = ""
     
     @State var resultText : String = " "
-    
     
     @State var showPopover: Bool = false
     @State var passwordEqual : Bool = false
@@ -38,6 +58,8 @@ struct LoginView: View {
     @State var loginSuccsess : Bool = false
     
     @State var animate : Bool = false
+    
+    @State var buttonPressed : Bool = false  //debug
     
     var body: some View {
         
@@ -70,12 +92,15 @@ struct LoginView: View {
                 
                 Result(resultText: self.$resultText)
                 
-                NavigationLink(destination: HomeView(username: self.username), isActive: $loginSuccsess ) { EmptyView() }
+                NavigationLink(destination: HomeView(), isActive: $loginSuccsess ) { EmptyView() }
                 
                 Button(action: {
+                    
                     self.animate = true
                     Auth.auth().signIn(withEmail: self.username, password: self.password) { authResult, error in
                         if (error == nil && authResult != nil) {
+                            offlineData.set(self.username, forKey: dataKeys.keyUsername)
+                            offlineData.set(self.password, forKey: dataKeys.keyPassword)
                             if(!self.userExists){
                                 dbQuerys.createUserInformationDoc(usermail: self.username)
                             }
@@ -90,6 +115,7 @@ struct LoginView: View {
                             self.loginSuccsess = false
                         }
                     }
+
                 }){
                     LoginButtonContext()
                 }
@@ -127,12 +153,11 @@ struct LoginView: View {
                 Image("SignInUp Image")
                     .frame(width: 1242, height: 2688, alignment: .center)
                     .scaleEffect(4/10))
-                .popover(
-                    isPresented: self.$showPopover
-                ){
-                    SignUpView(username: self.$username, password: self.$password, confirmPass: self.$confirmPass, showPopover: self.$showPopover, passwordEqual: self.$passwordEqual, userExists: self.$userExists, resultText: self.$resultText)
-                    
-            }
+            
+            
+        }
+        .popover(isPresented: self.$showPopover){
+            SignUpView(username: self.$username, password: self.$password, confirmPass: self.$confirmPass, showPopover: self.$showPopover, passwordEqual: self.$passwordEqual, userExists: self.$userExists, resultText: self.$resultText)
         }
     }
 }
@@ -147,7 +172,7 @@ class DataBaseQuerys {
         ]) { err in
             if let err = err {
                 print("Error updating document: \(err)")
-
+                
             } else {
                 print("Document successfully updated")
             }
@@ -155,33 +180,33 @@ class DataBaseQuerys {
         
     }
     
-    func getErrorMessage(sortedBy: String) {
-        
-        var desiredProperty: String!
-        
-        db.collection("UnknownErrorMessages").order(by: sortedBy, descending: true).limit(to: 1).getDocuments() { (querySnapshot, err) in
-            
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    
-                    let nameOfPropertyIwantToRetrieve = "errorMessage"
-                    
-                    if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
-                        desiredProperty = selectedProperty as? String
-                    }
-                    
-                    //The result from 'nameOfPropertyIwantToRetrieve'
-                    print(desiredProperty.description)
-                    
-                    
-                }
-            }
-            
-        }
-        
-    }
+//    func getErrorMessage(sortedBy: String) {
+//
+//        var desiredProperty: String!
+//
+//        db.collection("UnknownErrorMessages").order(by: sortedBy, descending: true).limit(to: 1).getDocuments() { (querySnapshot, err) in
+//
+//            if let err = err {
+//                print("Error getting documents: \(err)")
+//            } else {
+//                for document in querySnapshot!.documents {
+//
+//                    let nameOfPropertyIwantToRetrieve = "errorMessage"
+//
+//                    if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
+//                        desiredProperty = selectedProperty as? String
+//                    }
+//
+//                    //The result from 'nameOfPropertyIwantToRetrieve'
+//                    //print(desiredProperty.description)
+//
+//
+//                }
+//            }
+//
+//        }
+//
+//    }
     
     func createNewErrorDoc(errMessage : String) {
         
@@ -202,10 +227,10 @@ class DataBaseQuerys {
     func createUserInformationDoc(usermail: String) {
         
         let docData: [String: Any] =
-        [
-            "lastLogIn": Timestamp.init(),
-            "signedUp": Timestamp.init(),
-            "usermail": usermail
+            [
+                "lastLogIn": Timestamp.init(),
+                "signedUp": Timestamp.init(),
+                "usermail": usermail
         ]
         
         db.collection("User").document(usermail).setData(docData) { err in
@@ -221,7 +246,7 @@ class DataBaseQuerys {
 
 func errorDebugFunction(errDesc : String) -> String {
     
-    print("Error ",errDesc)
+    //print("Error ",errDesc)   //Debug
     
     if (errDesc.contains("Code=17020")) {
         return  "Network error has occured. Check your internet connection."
@@ -240,7 +265,6 @@ func errorDebugFunction(errDesc : String) -> String {
         return "An unknown error occured. Please restart the app!"
     }
 }
-
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
@@ -391,8 +415,11 @@ struct SignUpView: View {
                                 self.resultText = errorDebugFunction(errDesc: error.debugDescription)
                             } else if (error == nil && authResult != nil) {
                                 Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
-                                    
+                                    if (error != nil) {
+                                    dbQuerys.createNewErrorDoc(errMessage: String("\(error)"))
+                                    }
                                 })
+                                offlineData.set(true, forKey: dataKeys.keySingedUp)
                                 self.userExists = false
                                 self.showPopover = false
                             }
@@ -449,11 +476,8 @@ struct LoadingOverlay: View{
 }
 
 struct Result : View{
-    
     @Binding var resultText : String
-    
     var body: some View {
-        
         return Text(resultText)
             .bold()
             .background(Color.white.opacity(1/2))
@@ -461,7 +485,5 @@ struct Result : View{
             .cornerRadius(3)
             .padding(.bottom, 2)
             .padding(.bottom, 6)
-            
-        
     }
 }
