@@ -18,6 +18,7 @@ let dbQuerys = DataBaseQuerys()
 
 struct dataKeys {
     static let keyUsername = "keyUsername"
+    static let keyCompanyName = "keyCompanyName"
     static let keyPassword = "keyPassword"
     static let keySingedUp = "keySingedUp"
     
@@ -27,6 +28,7 @@ struct dataKeys {
     static let keyPauseDur = "pauseDuration"
     static let keyWorkEnd = "workEnd"
     static let keyWorkDur = "workDuration"
+    static let keyWorkDetails = "workDetails"
     
     static let keySActionV0 = "keySActionV0"
     static let keySActionV1 = "keySActionV1"

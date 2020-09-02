@@ -14,6 +14,9 @@ let dbQuery = ReadWriteData()
 
 let offlineData = UserDefaults.standard
 
+var sWidth = LoginView().screenWidth
+var sHeight = LoginView().screenHeight
+
 
 struct HomeView: View {
     
@@ -27,8 +30,7 @@ struct HomeView: View {
     @State var pEndSwipeable : Bool = true
     
     
-    @State var sWidth = LoginView().screenWidth
-    let sHeight = LoginView().screenHeight
+    
     
     @State var wStart: String = offlineData.string(forKey: dataKeys.keyWorkBegin) ?? ""
     @State var pStart : String = offlineData.string(forKey: dataKeys.keyPauseStart) ?? ""
@@ -59,9 +61,21 @@ struct HomeView: View {
                 .padding(.bottom, 20)
             
             
+            Text("Aktuell bitte die App nicht aus dem Verlauf löschen, ansonsten gehen die bisher eingetragenen Daten verloren!")
+                .padding(10)
+                .background(Color.red.opacity(1/2))
+                .font(.subheadline)
+                .foregroundColor(.white)
+                .cornerRadius(32)
+                .shadow(radius: 20)
+                .frame(width: (5/6 * sWidth))
+            
+            
+            
+            
             VStack{
                 if(self.showActionViews[0]) {
-                    StartButtonView(w : self.$sWidth)
+                    StartButtonView()
                     if(self.showActionViews[1]) {
                         
                         HStack{
@@ -88,14 +102,14 @@ struct HomeView: View {
                             }
                             
                         }
-                        .frame(width: (5/6 * self.sWidth), height: (((5/6 * self.sWidth)-20) * 1/3), alignment: .center)
+                        .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
                         .background(Color.white)
                         .cornerRadius(32)
                         .padding(.bottom, 10)
                         
                         if(self.showActionViews[2]) {
                             VStack{
-                                EndButtonView(w : self.$sWidth, wTime : self.$workDur)
+                                EndButtonView(wTime : self.$workDur)
                             }
                         }
                         
@@ -106,6 +120,7 @@ struct HomeView: View {
             Spacer()
             
             HStack{
+                
                 Button(action: {   // Button Work Start
                     self.workBeginDate = Date()
                     self.wStart = getTime()
@@ -113,14 +128,15 @@ struct HomeView: View {
                     withAnimation{
                         self.showActionViews[0] = true
                     }
+                    
                 }) {
                     Text("Start")
                 }
-                .modifier(ButtonMod(w : self.$sWidth))
+                .modifier(ButtonMod())
                 .disabled(self.showActionViews[0])
                 
                 Text("Pause")   // Button Pause Begin/End
-                    .modifier(ButtonMod(w : self.$sWidth))
+                    .modifier(ButtonMod())
                     .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
                         .onEnded({ value in
                             if (value.translation.width < 0) {
@@ -149,7 +165,8 @@ struct HomeView: View {
                                     self.pEndSwipeable = false
                                 }
                             }
-                        }))
+                        })
+                )
                     .disabled(self.showPauseEnd)
                 
                 Button(action: {    // Button Work End
@@ -164,10 +181,11 @@ struct HomeView: View {
                 }) {
                     Text("Ende")
                 }
-                .modifier(ButtonMod(w : self.$sWidth))
+                .modifier(ButtonMod())
                 .disabled(self.showActionViews[2])
+                
             }
-            .frame(width: (5/6 * self.sWidth), height: (((5/6 * self.sWidth)-20) * 1/3), alignment: .center)
+            .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
             .padding(.bottom, 10)
             
             HStack(alignment : .center){
@@ -193,7 +211,9 @@ struct HomeView: View {
         }
         
     }
+    
 }
+
 
 struct CheckView : View {
     
@@ -203,26 +223,87 @@ struct CheckView : View {
     @Binding var pBeginSwipeable : Bool
     @Binding var pEndSwipeable : Bool
     
+    
+    @State var reportTitle : String = ""
+    
+    var formatString = "Format: 'hh:mm'"
+    
+    @State var wStart : String = offlineData.string(forKey: dataKeys.keyWorkBegin) ?? "Format: 'hh:mm'"
+    @State var pStart : String = offlineData.string(forKey: dataKeys.keyPauseStart) ?? "Format: 'hh:mm'"
+    @State var pEnd : String = offlineData.string(forKey: dataKeys.keyPauseEnd) ?? "Format: 'hh:mm'"
+    @State var pDur : String = offlineData.string(forKey: dataKeys.keyPauseDur) ?? "Format: 'hh:mm'"
+    @State var wEnd : String = offlineData.string(forKey: dataKeys.keyWorkEnd) ?? "Format: 'hh:mm'"
+    @State var wDur : String = offlineData.string(forKey: dataKeys.keyWorkDur) ?? "Format: 'hh:mm'"
+    
+    @State var wDetails : String = "Details about location and what you did"
+    
     var body: some View {
         VStack{
             Text("Stimmen diese Daten?")
-            HStack{
-                Text("TextField")
-                Image(systemName : "pencil")
+                .font(.largeTitle)
+            
+            Spacer()
+            
+            HStack(alignment: .center){
+                Text("Arbeitsbeginn:")
+                
+                TextField(self.wStart, text: self.$wStart)
+                
             }
-            HStack{
-                Text("TextField")
-                Image(systemName : "pencil")
+            
+            HStack(alignment: .center){
+                Text("Pausenbeginn:")
+                
+                TextField(self.pStart, text: self.$pStart)
+                
             }
-            HStack{
-                Text("TextField")
-                Image(systemName : "pencil")
+            
+            HStack(alignment: .center){
+                Text("Pausenende:")
+                
+                TextField(self.pEnd, text: self.$pEnd)
+                
             }
-            HStack{
-                Text("TextField")
-                Image(systemName : "pencil")
+            
+            HStack(alignment: .center){
+                Text("Pausendauer:")
+                
+                TextField(self.pDur, text: self.$pDur)
+                
             }
+            
+            HStack(alignment: .center){
+                Text("Arbeitsende:")
+                
+                TextField(self.wEnd, text: self.$wEnd)
+                
+            }
+            
+            HStack(alignment: .center){
+                Text("Arbeitsdauer:")
+                
+                TextField(self.wDur, text: self.$wDur)
+                
+            }
+            
+            HStack(alignment: .center){
+                Text("Arbeitsdetails:")
+                
+                TextField( self.wDetails, text: self.$wDetails)
+                
+            }
+            
+            
             Button(action: {
+                
+                offlineData.set(self.wStart, forKey: dataKeys.keyWorkBegin)
+                offlineData.set(self.pStart, forKey: dataKeys.keyPauseStart)
+                offlineData.set(self.pEnd, forKey: dataKeys.keyPauseEnd)
+                offlineData.set(self.pDur, forKey: dataKeys.keyPauseDur)
+                offlineData.set(self.wEnd, forKey: dataKeys.keyWorkEnd)
+                offlineData.set(self.wDur, forKey: dataKeys.keyWorkDur)
+                offlineData.set(self.wDetails, forKey: dataKeys.keyWorkDetails)
+                
                 dbQuery.createNewWorReportDoc(un: offlineData.string(forKey: dataKeys.keyUsername) ?? "Fehler - Der Username konnte nicht abgerufen weden in den UserDefaults")
                 
                 self.showActionViews = [false, false, false]
@@ -234,6 +315,8 @@ struct CheckView : View {
                 Text("Jetzt abschicken")
             }
         }
+            
+        .background(Color.red)
     }
 }
 
@@ -245,7 +328,7 @@ func getDay() -> String {
 
 func getTime() -> String {
     let customFormatter = DateFormatter()
-    customFormatter.dateFormat = "H:mm:ss"
+    customFormatter.dateFormat = "H:mm"
     return (customFormatter.string(for: Date()) ?? "Error") as String
 }
 
@@ -267,7 +350,8 @@ class ReadWriteData {
                 "timeDocAdded": Timestamp.init(),
                 "workBegin": offlineData.string(forKey: dataKeys.keyWorkBegin) ?? "Error while writing WorkReport Data",
                 "workEnd": offlineData.string(forKey: dataKeys.keyWorkEnd) ?? "Error while writing WorkReport Data",
-                "workDuration": offlineData.string(forKey: dataKeys.keyWorkDur) ?? "Error while writing WorkReport Data"
+                "workDuration": offlineData.string(forKey: dataKeys.keyWorkDur) ?? "Error while writing WorkReport Data",
+                "workDetails": offlineData.string(forKey: dataKeys.keyWorkDetails) ?? "Error while writing WorkReport Data"
         ]
         
         db.collection("User").document(un).collection("workReport").document(getDay()).setData(docData) { err in
@@ -282,10 +366,10 @@ class ReadWriteData {
 
 struct ButtonMod: ViewModifier {
     
-    @Binding var w : CGFloat
+    
     func body(content: Content) -> some View {
         content
-            .frame(width: (((5/6 * self.w)-20) * 1/3), height: (((5/6 * self.w)-20) * 1/3))
+            .frame(width: (((5/6 * sWidth)-20) * 1/3), height: (((5/6 * sWidth)-20) * 1/3))
             .background(Color.white)
             .cornerRadius(32)
     }
@@ -300,14 +384,14 @@ func calcWorkDur(from firstDate: Date, to secondDate: Date, pauseDur: Int) -> In
 }
 
 struct StartButtonView : View{
-    @Binding var w : CGFloat
+    
     var body: some View {
         HStack{
             Text("Start:")
             Divider()
             Text("\(getTime())")
         }
-        .frame(width: (5/6 * w), height: (((5/6 * w)-20) * 1/3), alignment: .center)
+        .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
         .background(Color.white)
         .cornerRadius(32)
         .padding(.bottom, 10)
@@ -315,7 +399,7 @@ struct StartButtonView : View{
 }
 
 struct EndButtonView : View{
-    @Binding var w : CGFloat
+    
     @Binding var wTime : Int
     var body: some View {
         VStack{
@@ -332,7 +416,7 @@ struct EndButtonView : View{
             }
             
         }
-        .frame(width: (5/6 * w), height: (((5/6 * w)-20) * 1/3), alignment: .center)
+        .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
         .background(Color.white)
         .cornerRadius(32)
     }
