@@ -10,70 +10,84 @@ import SwiftUI
 
 struct SlideMenuView: View {
     
-    //@State var accessReportFolder : Bool = false
-    
     @State var ex : Int = 2
+    
+    @State var ntoActive : Bool = false
     
     var body: some View {
         
-        VStack{
-            
-            HStack{
-                Text("Menu")
-            }
-            
-            Divider()
+        VStack(alignment: .center, spacing: 10){
             
             HStack{
                 
-                VStack{
+                //Userinfos
+                VStack(alignment : .leading){
                     Text("\(offlineData.string(forKey: dataKeys.keyUsername) ?? "Error")")
                     
-                    //Text("\(offlineData.string(forKey: dataKeys.keyCompanyName) ?? "")")
+                    Text("\(offlineData.string(forKey: dataKeys.keyCompanyName) ?? "No company")")
                     
                 }
+                .padding(.leading, 16)
                 
-                //prfilbild
+                Spacer()
+                
+                //Profilbild
                 ZStack{
                     
                     Image(systemName : "person")
-                        .padding(18)
+                        .padding(31)
                         .background(Color.black)
                         .clipShape(Circle())
                     
                     Image(systemName : "person")
-                        .padding()
+                        .padding(30)
                         .background(Color.init(.lightGray))
                         .clipShape(Circle())
-                }
-                
-                
-                
-                
-                
-                
-            }
-            
-            Divider()
-            
-            NavigationLink(destination: ReportFolderView(reports : ["hehe", "huhuh"])) {
-                
-                Button(action: {
-                    //Load report data from firebase from last 30 days
                     
-                }){
-                    Text("Reports")
                 }
+                .padding(.trailing, 16)
+                
             }
+            .frame(width: ((4/5) * sWidth), height: ((2/20) * sHeight))
+            .background(Color.white.opacity(1/2))
+            .foregroundColor(.white)
+            .cornerRadius(16)
             
-            Divider()
+//            NavigationLink(destination: ReportFolderView(), isActive: self.$ntoActive) {
+//                Text("Reports")
+//                    .foregroundColor(.white)
+//            }
+//            .modifier(MenuItemModifier())
+//            
+//            NavigationLink(destination: EmptyView(), isActive: self.$ntoActive  ) {
+//                Text("Settings")
+//                    .foregroundColor(.white)
+//            }
+//            .modifier(MenuItemModifier())
+            
+            Spacer()
+            
+            
         }
-        
+        .frame(width: ((4/5)*sWidth))
+        .background(Color.clear)
     }
 }
 
 struct SlideMenuView_Previews: PreviewProvider {
     static var previews: some View {
         SlideMenuView()
+    }
+}
+
+struct MenuItemModifier : ViewModifier {
+    
+    func body(content: Content) -> some View {
+        content
+            .frame(width: ((4/5) * sWidth), height: ((1/20) * sHeight))
+            .background(Color.white.opacity(1/2))
+            .foregroundColor(.white)
+            .cornerRadius(16)
+            
     }
 }

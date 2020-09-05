@@ -28,7 +28,10 @@ struct dataKeys {
     static let keyPauseDur = "pauseDuration"
     static let keyWorkEnd = "workEnd"
     static let keyWorkDur = "workDuration"
-    static let keyWorkDetails = "workDetails"
+    static let keyWorkDetailsLocation : String = "workLocation"
+    static let keyWorkDetailsActivities : String = "workActivities"
+    
+    static let keyWorkDetails : String = "workDetails"
     
     static let keySActionV0 = "keySActionV0"
     static let keySActionV1 = "keySActionV1"
@@ -103,10 +106,8 @@ struct LoginView: View {
                         if (error == nil && authResult != nil) {
                             offlineData.set(self.username, forKey: dataKeys.keyUsername)
                             offlineData.set(self.password, forKey: dataKeys.keyPassword)
-                            if(!self.userExists){
-                                dbQuerys.createUserInformationDoc(usermail: self.username)
-                            }
                             dbQuerys.updateLastLogInTime(un: self.username)
+                            //dbQuerys.getUserData(un: self.username)
                             print("Login Succsess")
                             self.animate = false
                             self.loginSuccsess = true
@@ -117,7 +118,7 @@ struct LoginView: View {
                             self.loginSuccsess = false
                         }
                     }
-
+                    
                 }){
                     LoginButtonContext()
                 }
@@ -167,6 +168,36 @@ struct LoginView: View {
 
 class DataBaseQuerys {
     
+    func getUserData(un : String) {
+        
+//        var desiredProperty: String!
+//
+//        db.collection("User").document("\(un)").getDocuments() { (querySnapshot, err) in
+//
+//            if let err = err {
+//                print("Error getting documents: \(err)")
+//            } else {
+//                for document in querySnapshot!.documents {
+//
+//                    let nameOfPropertyIwantToRetrieve = "companyName"
+//
+//                    if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
+//                        desiredProperty = selectedProperty as? String
+//                    }
+//
+//                    //The result from 'nameOfPropertyIwantToRetrieve'
+//                    print(desiredProperty.description)
+//
+//                    offlineData.set(desiredProperty.description, forKey: dataKeys.keyCompanyName)
+//
+//
+//                }
+//            }
+//
+//        }
+        
+    }
+    
     func updateLastLogInTime(un : String) {
         
         db.collection("User").document(un).updateData([
@@ -182,33 +213,33 @@ class DataBaseQuerys {
         
     }
     
-//    func getErrorMessage(sortedBy: String) {
-//
-//        var desiredProperty: String!
-//
-//        db.collection("UnknownErrorMessages").order(by: sortedBy, descending: true).limit(to: 1).getDocuments() { (querySnapshot, err) in
-//
-//            if let err = err {
-//                print("Error getting documents: \(err)")
-//            } else {
-//                for document in querySnapshot!.documents {
-//
-//                    let nameOfPropertyIwantToRetrieve = "errorMessage"
-//
-//                    if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
-//                        desiredProperty = selectedProperty as? String
-//                    }
-//
-//                    //The result from 'nameOfPropertyIwantToRetrieve'
-//                    //print(desiredProperty.description)
-//
-//
-//                }
-//            }
-//
-//        }
-//
-//    }
+    //    func getErrorMessage(sortedBy: String) {
+    //
+    //        var desiredProperty: String!
+    //
+    //        db.collection("UnknownErrorMessages").order(by: sortedBy, descending: true).limit(to: 1).getDocuments() { (querySnapshot, err) in
+    //
+    //            if let err = err {
+    //                print("Error getting documents: \(err)")
+    //            } else {
+    //                for document in querySnapshot!.documents {
+    //
+    //                    let nameOfPropertyIwantToRetrieve = "errorMessage"
+    //
+    //                    if let selectedProperty = document.data()[nameOfPropertyIwantToRetrieve] {
+    //                        desiredProperty = selectedProperty as? String
+    //                    }
+    //
+    //                    //The result from 'nameOfPropertyIwantToRetrieve'
+    //                    //print(desiredProperty.description)
+    //
+    //
+    //                }
+    //            }
+    //
+    //        }
+    //
+    //    }
     
     func createNewErrorDoc(errMessage : String) {
         
@@ -230,6 +261,7 @@ class DataBaseQuerys {
         
         let docData: [String: Any] =
             [
+                "companyName": "No company",
                 "lastLogIn": Timestamp.init(),
                 "signedUp": Timestamp.init(),
                 "usermail": usermail
@@ -416,9 +448,10 @@ struct SignUpView: View {
                             if (error != nil && authResult == nil) {
                                 self.resultText = errorDebugFunction(errDesc: error.debugDescription)
                             } else if (error == nil && authResult != nil) {
+                                dbQuerys.createUserInformationDoc(usermail: self.username)
                                 Auth.auth().currentUser?.sendEmailVerification(completion: { (error) in
                                     if (error != nil) {
-                                    dbQuerys.createNewErrorDoc(errMessage: String("\(error)"))
+                                        dbQuerys.createNewErrorDoc(errMessage: String("\(error)"))
                                     }
                                 })
                                 offlineData.set(true, forKey: dataKeys.keySingedUp)

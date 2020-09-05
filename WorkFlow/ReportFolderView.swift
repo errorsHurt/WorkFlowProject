@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ReportFolderView: View {
     
-    var reports : [String]
+    
     
     
     
@@ -25,6 +25,6 @@ struct ReportFolderView: View {
 
 struct ReportFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportFolderView(reports: ["Das", "ist", "ein", "Beispiel"])
+        ReportFolderView()
     }
 }
