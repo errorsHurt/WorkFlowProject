@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		9F9032A87EFCA012DEAA4760 /* Pods_WorkFlow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB8F17E473E1F7E5EC6B0E3 /* Pods_WorkFlow.framework */; };
 		E7189CF524FFC0270080A473 /* SlideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7189CF424FFC0270080A473 /* SlideMenuView.swift */; };
-		E7189CF724FFC1170080A473 /* ReportFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7189CF624FFC1170080A473 /* ReportFolderView.swift */; };
 		E7487EDB24F67B230031911E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E7487EDA24F67B230031911E /* GoogleService-Info.plist */; };
 		E77E86BD24F7F07B0055E30E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77E86BC24F7F07B0055E30E /* HomeView.swift */; };
 		E7934AEE24F66FCA004DC745 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7934AED24F66FCA004DC745 /* AppDelegate.swift */; };
@@ -25,7 +24,6 @@
 		9A277559088BC38E4DF9FF84 /* Pods-WorkFlow.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkFlow.debug.xcconfig"; path = "Target Support Files/Pods-WorkFlow/Pods-WorkFlow.debug.xcconfig"; sourceTree = "<group>"; };
 		C1DBD050CC3E536A0A712FAE /* Pods-WorkFlow.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkFlow.release.xcconfig"; path = "Target Support Files/Pods-WorkFlow/Pods-WorkFlow.release.xcconfig"; sourceTree = "<group>"; };
 		E7189CF424FFC0270080A473 /* SlideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideMenuView.swift; sourceTree = "<group>"; };
-		E7189CF624FFC1170080A473 /* ReportFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportFolderView.swift; sourceTree = "<group>"; };
 		E7443FB824FC547700FCA7EE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E7487EDA24F67B230031911E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		E77E86BC24F7F07B0055E30E /* HomeView.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; tabWidth = 4; };
@@ -94,7 +92,6 @@
 				E7934AF124F66FCA004DC745 /* LoginView.swift */,
 				E77E86BC24F7F07B0055E30E /* HomeView.swift */,
 				E7189CF424FFC0270080A473 /* SlideMenuView.swift */,
-				E7189CF624FFC1170080A473 /* ReportFolderView.swift */,
 				E7934AF324F66FCC004DC745 /* Assets.xcassets */,
 				E7934AF824F66FCC004DC745 /* LaunchScreen.storyboard */,
 				E7934AFB24F66FCD004DC745 /* Info.plist */,
@@ -231,7 +228,6 @@
 			files = (
 				E7934AEE24F66FCA004DC745 /* AppDelegate.swift in Sources */,
 				E77E86BD24F7F07B0055E30E /* HomeView.swift in Sources */,
-				E7189CF724FFC1170080A473 /* ReportFolderView.swift in Sources */,
 				E7189CF524FFC0270080A473 /* SlideMenuView.swift in Sources */,
 				E7934AF024F66FCA004DC745 /* SceneDelegate.swift in Sources */,
 				E7934AF224F66FCA004DC745 /* LoginView.swift in Sources */,
@@ -379,6 +375,7 @@
 				DEVELOPMENT_TEAM = 626AMH23DJ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = WorkFlow/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -400,6 +397,7 @@
 				DEVELOPMENT_TEAM = 626AMH23DJ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = WorkFlow/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

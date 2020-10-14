@@ -102,11 +102,12 @@ struct LoginView: View {
                 Button(action: {
                     
                     self.animate = true
-                    Auth.auth().signIn(withEmail: self.username, password: self.password) { authResult, error in
+                    let unLow : String = self.username.lowercased()
+                    Auth.auth().signIn(withEmail: unLow, password: self.password) { authResult, error in
                         if (error == nil && authResult != nil) {
-                            offlineData.set(self.username, forKey: dataKeys.keyUsername)
+                            offlineData.set(unLow, forKey: dataKeys.keyUsername)
                             offlineData.set(self.password, forKey: dataKeys.keyPassword)
-                            dbQuerys.updateLastLogInTime(un: self.username)
+                            dbQuerys.updateLastLogInTime(un: unLow)
                             //dbQuerys.getUserData(un: self.username)
                             print("Login Succsess")
                             self.animate = false
@@ -444,7 +445,8 @@ struct SignUpView: View {
                 .onTapGesture {
                     if(self.confirmPass.elementsEqual(self.password)){
                         self.showPopover = true
-                        Auth.auth().createUser(withEmail: self.username, password: self.password) { authResult, error in
+                        let unLow : String = self.username.lowercased()
+                        Auth.auth().createUser(withEmail: unLow, password: self.password) { authResult, error in
                             if (error != nil && authResult == nil) {
                                 self.resultText = errorDebugFunction(errDesc: error.debugDescription)
                             } else if (error == nil && authResult != nil) {

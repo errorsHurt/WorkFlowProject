@@ -20,6 +20,10 @@ let sHeight = LoginView().screenHeight
 
 struct HomeView: View {
     
+    @State var date : Date = Date()
+    
+    @State var showPauseOption : Bool = true
+    
     @State var showMenu : Bool = false
     
     @State var showCheckView : Bool = false
@@ -55,188 +59,181 @@ struct HomeView: View {
         
         HStack(alignment: .center){
             
-            
-            SlideMenuView()
-                .padding(.trailing, 70)
-            
-            
-            VStack{
+            VStack(alignment: .center , spacing: 0){
                 
-                
-                VStack(alignment: .center, spacing: 10){
+                HStack(){
                     
-                    HStack{
-                        
-                        Text(getDay())
-                            .padding(10)
-                            .background(Color.white.opacity(1/2))
-                            .font(.system(size: 30))
-                            .foregroundColor(.white)
-                            .cornerRadius(32)
-                            .shadow(radius: 20)
-                            .padding(.bottom, 20)
-                        
-                        Spacer()
-                        
-                    }
-                    
-                    Text("Aktuell bitte die App nicht aus dem Verlauf löschen, ansonsten gehen die bisher eingetragenen Daten verloren!")
-                        .padding(5)
-                        .background(Color.red.opacity(1/2))
-                        .cornerRadius(16)
-                        .foregroundColor(.white)
-                    
-                    VStack{
-                        if(self.showActionViews[0]) {
-                            StartButtonView()
-                            if(self.showActionViews[1]) {
-                                
-                                HStack{
-                                    VStack(alignment : .leading, spacing : 5){
-                                        HStack(spacing: 20){
-                                            Text("Pause Start")
-                                            Text("\(self.pStart)")
-                                        }
-                                        if(self.showPauseEnd){
-                                            HStack(spacing: 20){
-                                                Text("Pause Ende")
-                                                Text("\(self.pEnd)")
-                                            }
-                                        }
-                                    }
-                                    if(self.showPauseEnd){
-                                        Divider()
-                                        VStack(alignment: .leading){
-                                            Text("Dauer")
-                                            HStack(alignment: .center){
-                                                Text("\(self.pauseDur)")
-                                            }
-                                        }
-                                    }
-                                    
-                                }
-                                .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
-                                .background(Color.white)
-                                .cornerRadius(32)
-                                .padding(.bottom, 10)
-                                
-                                if(self.showActionViews[2]) {
-                                    VStack{
-                                        EndButtonView(wTime : self.$workDur)
-                                    }
-                                }
-                                
-                            }
-                        }
-                    }
+                    DateView()
                     
                     Spacer()
-                    
-                    HStack{
-                        
-                        Button(action: {   // Button Work Start
-                            self.workBeginDate = Date()
-                            self.wStart = getTime()
-                            offlineData.set(self.wStart, forKey : dataKeys.keyWorkBegin)
-                            withAnimation{
-                                self.showActionViews[0] = true
-                            }
-                            
-                        }) {
-                            Text("Start")
-                        }
-                        .modifier(ButtonMod())
-                        .disabled(self.showActionViews[0])
-                        
-                        Text("Pause")   // Button Pause Begin/End
-                            .modifier(ButtonMod())
-                            .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
-                                .onEnded({ value in
-                                    if (value.translation.width < 0) {
-                                        print("links")
-                                        if(self.pBeginSwipeable == true){
-                                            self.pBeginSwipeable = false
-                                            self.pStart = getTime()
-                                            
-                                            self.pauseBeginDate = Date()
-                                            withAnimation{
-                                                self.showActionViews[1] = true
-                                            }
-                                            offlineData.set(self.pStart, forKey : dataKeys.keyPauseStart)
-                                        }
-                                    } else if (value.translation.width > 0) {
-                                        print("rechts")
-                                        if(self.pEndSwipeable == true && self.pBeginSwipeable == false){
-                                            self.pEnd = getTime()
-                                            offlineData.set(self.pEnd, forKey : dataKeys.keyPauseEnd)
-                                            self.pauseEndDate = Date()
-                                            self.pauseDur =  calcPauseDur(from: self.pauseBeginDate, to: self.pauseEndDate)
-                                            offlineData.set("\(self.pauseDur)", forKey : dataKeys.keyPauseDur)
-                                            withAnimation{
-                                                self.showPauseEnd = true
-                                            }
-                                            self.pEndSwipeable = false
-                                        }
-                                    }
-                                })
-                        )
-                            .disabled(self.showPauseEnd)
-                        
-                        Button(action: {    // Button Work End
-                            self.workEndDate = Date()
-                            self.wEnd = getTime()
-                            offlineData.set(self.wEnd, forKey : dataKeys.keyWorkEnd)
-                            withAnimation{
-                                self.showActionViews[2] = true
-                            }
-                            self.workDur = calcWorkDur(from: self.workBeginDate, to: self.workEndDate, pauseDur: self.pauseDur)
-                            offlineData.set("\(self.workDur)", forKey : dataKeys.keyWorkDur)
-                        }) {
-                            Text("Ende")
-                        }
-                        .modifier(ButtonMod())
-                        .disabled(self.showActionViews[2])
-                        
-                    }
-                    .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
+                }
+                
+                
+                Text("Aktuell bitte die App nicht aus dem Verlauf löschen, ansonsten gehen die bisher eingetragenen Daten verloren!")
+                    .padding(10)
+                    .background(Color.red.opacity(1/2))
+                    .cornerRadius(16)
+                    .foregroundColor(.white)
                     .padding(.bottom, 10)
                     
-                    HStack(alignment : .center){
-                        if(self.showActionViews[2]) {
-                            Button(action: {
-                                self.showCheckView = true
-                            }){
-                                Text("Daten abschicken?")
+                    
+                    
+                
+                
+                
+                
+                VStack{
+                    
+                    if(self.showActionViews[0]) {
+                        StartButtonView()
+                        if(self.showActionViews[1]) {
+                            
+                            HStack{
+                                VStack(alignment : .leading, spacing : 5){
+                                    HStack(spacing: 20){
+                                        Text("Pause Start")
+                                        Text("\(self.pStart)")
+                                    }
+                                    if(self.showPauseEnd){
+                                        HStack(spacing: 20){
+                                            Text("Pause Ende")
+                                            Text("\(self.pEnd)")
+                                        }
+                                    }
+                                }
+                                if(self.showPauseEnd){
+                                    Divider()
+                                    VStack(alignment: .leading){
+                                        Text("Dauer")
+                                        HStack(alignment: .center){
+                                            Text("\(self.pauseDur)")
+                                        }
+                                    }
+                                }
+                                
                             }
-                            .padding(10)
-                            .background(Color.white.opacity(1/2))
-                            .foregroundColor(.white)
+                            .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
+                            .background(Color.white)
                             .cornerRadius(32)
-                            .shadow(radius: 20)
+                            .padding(.bottom, 5)
+                            
+                            if(self.showActionViews[2]) {
+                                VStack{
+                                    EndButtonView(wTime : self.$workDur)
+                                }
+                            }
+                            
                         }
-                    }.padding(.bottom, 30)
+                    }
                     
                 }
+                
+                
+                Spacer()
+                
+                HStack{
+                    
+                    Button(action: {   // Button Work Start
+                        self.workBeginDate = Date()
+                        self.wStart = getTime()
+                        offlineData.set(self.wStart, forKey : dataKeys.keyWorkBegin)
+                        withAnimation{
+                            self.showActionViews[0] = true
+                        }
+                        
+                    }) {
+                        Text("Start")
+                    }
+                    .modifier(ButtonMod())
+                    .disabled(self.showActionViews[0])
+                    
+                    Text("Pause")   // Button Pause Begin/End
+                        .modifier(ButtonMod())
+                        .gesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
+                            .onEnded({ value in
+                                if (value.translation.width < 0) {
+                                    print("links")
+                                    if(self.pBeginSwipeable == true){
+                                        self.pBeginSwipeable = false
+                                        self.pStart = getTime()
+                                        
+                                        self.pauseBeginDate = Date()
+                                        withAnimation{
+                                            self.showActionViews[1] = true
+                                        }
+                                        offlineData.set(self.pStart, forKey : dataKeys.keyPauseStart)
+                                    }
+                                } else if (value.translation.width > 0) {
+                                    print("rechts")
+                                    if(self.pEndSwipeable == true && self.pBeginSwipeable == false){
+                                        self.pEnd = getTime()
+                                        offlineData.set(self.pEnd, forKey : dataKeys.keyPauseEnd)
+                                        self.pauseEndDate = Date()
+                                        self.pauseDur =  calcPauseDur(from: self.pauseBeginDate, to: self.pauseEndDate)
+                                        offlineData.set("\(self.pauseDur)", forKey : dataKeys.keyPauseDur)
+                                        withAnimation{
+                                            self.showPauseEnd = true
+                                        }
+                                        self.pEndSwipeable = false
+                                    }
+                                }
+                            })
+                    )
+                        .disabled(self.showPauseEnd)
+                    
+                    Button(action: {    // Button Work End
+                        self.workEndDate = Date()
+                        self.wEnd = getTime()
+                        offlineData.set(self.wEnd, forKey : dataKeys.keyWorkEnd)
+                        withAnimation{
+                            self.showActionViews[2] = true
+                        }
+                        self.workDur = calcWorkDur(from: self.workBeginDate, to: self.workEndDate, pauseDur: self.pauseDur)
+                        offlineData.set("\(self.workDur)", forKey : dataKeys.keyWorkDur)
+                    }) {
+                        Text("Ende")
+                    }
+                    .modifier(ButtonMod())
+                    .disabled(self.showActionViews[2])
+                    
+                }
+                .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
+                .padding(.bottom, 5)
+                
+                
+                HStack(alignment : .center){
+                    if(self.showActionViews[2]) {
+                        Button(action: {
+                            self.showCheckView = true
+                        }){
+                            Text("Daten abschicken?")
+                        }
+                        .padding(10)
+                        .background(Color.white.opacity(1/2))
+                        .foregroundColor(.white)
+                        .cornerRadius(32)
+                    }
+                }.padding(.bottom, 30)
                 
             }
             
             
+            
+            
         }
-        .offset(x: self.slideMenu, y: 0)
-        .navigationBarBackButtonHidden(true)
+    .navigationBarBackButtonHidden(true)
+        .padding(.horizontal, 20)
         .background(Image("SignInUp Image").scaleEffect(0.5).blur(radius: 20), alignment: .center)
         .popover(isPresented: self.$showCheckView){
             CheckView(show : self.$showCheckView, showActionViews : self.$showActionViews, showPauseEnd : self.$showPauseEnd, pBeginSwipeable: self.$pBeginSwipeable, pEndSwipeable: self.$pEndSwipeable)
         }
-        .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
+        .gesture(DragGesture(minimumDistance: 20, coordinateSpace: .local)
         .onEnded{ value in
             if 0 > value.translation.width {
-                print("left")
                 withAnimation{
                     self.slideMenu = self.slideMenuIn
                 }
             } else if 0 < value.translation.width {
-                print("right")
                 withAnimation{
                     self.slideMenu = self.slideMenuOut
                 }
@@ -245,6 +242,19 @@ struct HomeView: View {
             
         })
         
+    }
+    
+    struct DateView : View {
+        var body: some View {
+        Text(getDayTitle())
+        .padding(10)
+        .background(Color.white.opacity(1/2))
+        .font(.system(size: 30))
+        .foregroundColor(.white)
+        .cornerRadius(32)
+        .shadow(radius: 20)
+        .padding(.bottom, 5)
+        }
     }
     
 }
@@ -256,7 +266,6 @@ public func slideIn(){
 public func slideOut(){
     HomeView().slideMenu = HomeView().slideMenuOut
 }
-
 
 struct CheckView : View {
     
@@ -406,9 +415,9 @@ struct CheckView : View {
                 offlineData.set(self.wDur, forKey: dataKeys.keyWorkDur)
                 offlineData.set(self.wDLoc, forKey: dataKeys.keyWorkDetailsLocation)
                 offlineData.set(self.wDAct, forKey: dataKeys.keyWorkDetailsActivities)
-
-                self.details  = ((offlineData.string(forKey: dataKeys.keyWorkDetailsLocation) ?? "Ein Fehler ist aufgetreten") + (offlineData.string(forKey: dataKeys.keyWorkDetailsActivities) ??  "Ein Fehler ist aufgetreten"))
-
+                
+                self.details  = "Ort: " + ((offlineData.string(forKey: dataKeys.keyWorkDetailsLocation) ?? "Ein Fehler ist aufgetreten") + " | Tätigkeit/en: " + (offlineData.string(forKey: dataKeys.keyWorkDetailsActivities) ??  "Ein Fehler ist aufgetreten"))
+                
                 offlineData.set(self.details, forKey: dataKeys.keyWorkDetails)
                 
                 
@@ -422,12 +431,16 @@ struct CheckView : View {
             }){
                 Text("Jetzt abschicken")
             }
-            .padding(.bottom, 10)
+        
+                .buttonStyle(PlainButtonStyle())
+            .foregroundColor(.black)
+                .font(.largeTitle)
+            .padding(.top, 10)
             
         }
         .padding()
         .frame(width: (5/6 * sWidth))
-        .background(Color.clear)
+        .background(Color.init(.white))
     }
 }
 
@@ -452,9 +465,15 @@ struct CheckTextFieldModifier : ViewModifier {
     }
 }
 
-func getDay() -> String {
+func getDayTitle() -> String {
     let customFormatter = DateFormatter()
     customFormatter.dateFormat = "eeee, dd.MM."
+    return (customFormatter.string(for: Date()) ?? "Error") as String
+}
+
+func getDay() -> String {
+    let customFormatter = DateFormatter()
+    customFormatter.dateFormat = "eeee, dd.MM., HH:mm:ss "
     return (customFormatter.string(for: Date()) ?? "Error") as String
 }
 
@@ -527,7 +546,7 @@ struct StartButtonView : View{
         .frame(width: (5/6 * sWidth), height: (((5/6 * sWidth)-20) * 1/3), alignment: .center)
         .background(Color.white)
         .cornerRadius(32)
-        .padding(.bottom, 10)
+        .padding(.bottom, 5)
     }
 }
 
